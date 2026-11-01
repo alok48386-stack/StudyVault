@@ -1,0 +1,108 @@
+<%- include('layout-header') %>
+
+<div class="admin-page-header">
+  <div>
+    <h1 class="admin-heading">Notes Management</h1>
+    <p class="admin-subheading">Manage, search, edit, and delete study notes (<%= notes.length %> notes found)</p>
+  </div>
+  <div class="admin-header-actions">
+    <a href="/admin/notes/new" class="btn btn-primary">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+      Upload New Note
+    </a>
+  </div>
+</div>
+
+<!-- Admin Filter & Search Bar -->
+<div class="admin-toolbar">
+  <form action="/admin/notes" method="GET" class="admin-search-form">
+    <div class="search-input-group">
+      <input 
+        type="text" 
+        name="q" 
+        class="form-control" 
+        placeholder="Filter by title, description or subject..." 
+        value="<%= typeof searchQuery !== 'undefined' ? searchQuery : '' %>"
+      >
+      <button type="submit" class="btn btn-secondary">Filter</button>
+      <% if (searchQuery) { %>
+        <a href="/admin/notes" class="btn btn-outline">Clear</a>
+      <% } %>
+    </div>
+  </form>
+</div>
+
+<!-- Notes Data Table -->
+<div class="admin-card">
+  <div class="table-responsive">
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th>Preview</th>
+          <th>Title</th>
+          <th>Subject</th>
+          <th>Format</th>
+          <th>Size</th>
+          <th>Downloads</th>
+          <th>Date Added</th>
+          <th class="text-right">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% if (notes && notes.length > 0) { %>
+          <% notes.forEach(note => { %>
+            <tr>
+              <td class="col-thumb">
+                <% const pSrc = note.preview_image ? (note.preview_image.startsWith('/') ? note.preview_image : '/' + note.preview_image) : '/storage/previews/default-preview.svg'; %>
+                <img src="<%= pSrc %>" alt="" class="table-thumb" onerror="this.src='/storage/previews/default-preview.svg';">
+              </td>
+              <td class="col-title">
+                <a href="/note/<%= note.slug %>" target="_blank" class="title-link font-semibold">
+                  <%= note.title %>
+                </a>
+                <div class="text-xs text-muted">by <%= note.uploader_name || 'Admin' %></div>
+              </td>
+              <td>
+                <span class="badge badge-sub"><%= note.category_name %></span>
+              </td>
+              <td>
+                <span class="badge badge-type <%= (note.file_type || 'pdf').toLowerCase() %>">
+                  <%= (note.file_type || 'PDF').toUpperCase() %>
+                </span>
+              </td>
+              <td><%= formatBytes(note.file_size) %></td>
+              <td>
+                <span class="download-pill">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                  <%= note.download_count %>
+                </span>
+              </td>
+              <td class="text-muted"><%= formatDate(note.created_at) %></td>
+              <td class="text-right table-actions">
+                <a href="/note/<%= note.slug %>" target="_blank" class="btn btn-sm btn-icon" title="View Public Note">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                </a>
+                <a href="/admin/notes/<%= note.id %>/edit" class="btn btn-sm btn-outline">Edit</a>
+                <form action="/admin/notes/<%= note.id %>/delete" method="POST" class="inline-form" onsubmit="return confirm('Permanently delete this note and remove its files from storage?');">
+                  <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                </form>
+              </td>
+            </tr>
+          <% }); %>
+        <% } else { %>
+          <tr>
+            <td colspan="8" class="text-center py-4 text-muted">
+              <% if (searchQuery) { %>
+                No notes found matching "<%= searchQuery %>". <a href="/admin/notes">Show all notes</a>.
+              <% } else { %>
+                No notes in library yet. <a href="/admin/notes/new">Add the first note</a>.
+              <% } %>
+            </td>
+          </tr>
+        <% } %>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<%- include('layout-footer') %>

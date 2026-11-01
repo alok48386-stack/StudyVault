@@ -1,0 +1,29 @@
+{
+  "name": "student-notes-sharing",
+  "version": "1.0.0",
+  "description": "Student Notes Sharing Website built with Node.js, Express, and SQLite",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "node test-server.js",
+    "dev": "node --watch server.js",
+    "seed": "node database/seed.js"
+  },
+  "keywords": [
+    "notes",
+    "education",
+    "students",
+    "express",
+    "sqlite"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "better-sqlite3": "^12.6.2",
+    "dotenv": "^17.3.1",
+    "ejs": "^3.1.10",
+    "express": "^4.22.1",
+    "express-session": "^1.18.2",
+    "multer": "^2.1.1"
+  }
+}

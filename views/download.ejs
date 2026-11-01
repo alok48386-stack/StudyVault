@@ -1,0 +1,117 @@
+<%- include('partials/header') %>
+<%- include('partials/ad-script') %>
+
+<div class="container download-page-container">
+  <!-- Download Loader Card -->
+  <div class="download-card" id="download-loader-container">
+    <div class="download-icon-circle">
+      <svg class="cloud-icon" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+        <polyline points="7 10 12 15 17 10"></polyline>
+        <line x1="12" y1="15" x2="12" y2="3"></line>
+      </svg>
+    </div>
+
+    <h1 class="download-heading" id="download-status-text">Your download is starting...</h1>
+    <p class="download-subtext">Preparing <strong><%= note.title %></strong> (<%= formatBytes(note.file_size) %>)</p>
+
+    <!-- 5-Second Animated Progress Bar -->
+    <div class="progress-container">
+      <div class="progress-bar" id="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+    </div>
+    <div class="countdown-display" id="countdown-display">
+      Starting in <span id="seconds-counter">5</span> seconds...
+    </div>
+
+    <!-- Fallback Manual Link -->
+    <div class="download-fallback-area" id="fallback-area">
+      <p>Download not starting? 
+        <a href="/file/<%= note.slug %>" class="manual-download-link" id="manual-download-btn">
+          Click here to download directly
+        </a>
+      </p>
+    </div>
+
+    <!-- Navigation Quick Links -->
+    <div class="download-nav-actions">
+      <a href="/note/<%= note.slug %>" class="btn btn-secondary btn-sm">
+        &larr; Back to Note Details
+      </a>
+      <a href="/" class="btn btn-secondary btn-sm">
+        Return to Homepage &rarr;
+      </a>
+    </div>
+  </div>
+
+  <!-- More Suggested Notes Section (6 to 8 notes) -->
+  <% if (suggestedNotes && suggestedNotes.length > 0) { %>
+    <section class="suggested-notes-section">
+      <div class="section-header">
+        <div>
+          <h2 class="section-title">More Suggested Notes</h2>
+          <p class="section-subtitle">Recommended study notes you might also find helpful</p>
+        </div>
+      </div>
+
+      <div class="notes-grid suggested-grid">
+        <% suggestedNotes.forEach(sugNote => { %>
+          <%- include('partials/note-card', { note: sugNote }) %>
+        <% }); %>
+      </div>
+    </section>
+  <% } %>
+</div>
+
+<!-- Download Loader Script -->
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const fileUrl = '/file/<%= note.slug %>';
+    const progressBar = document.getElementById('progress-bar');
+    const secondsCounter = document.getElementById('seconds-counter');
+    const statusText = document.getElementById('download-status-text');
+    const totalDuration = 5000; // 5 seconds
+    const intervalTime = 50; // Update every 50ms
+    const totalSteps = totalDuration / intervalTime;
+    let currentStep = 0;
+
+    const timer = setInterval(function() {
+      currentStep++;
+      const percent = Math.min(100, Math.round((currentStep / totalSteps) * 100));
+      if (progressBar) {
+        progressBar.style.width = percent + '%';
+        progressBar.setAttribute('aria-valuenow', percent);
+      }
+
+      const remainingSeconds = Math.max(0, Math.ceil((totalDuration - (currentStep * intervalTime)) / 1000));
+      if (secondsCounter) {
+        secondsCounter.textContent = remainingSeconds;
+      }
+
+      if (currentStep >= totalSteps) {
+        clearInterval(timer);
+        if (statusText) {
+          statusText.innerHTML = '&#9989; Download Started!';
+        }
+        if (secondsCounter && secondsCounter.parentElement) {
+          secondsCounter.parentElement.textContent = 'Your file is downloading now.';
+        }
+
+        // Trigger file download
+        const hiddenIframe = document.createElement('iframe');
+        hiddenIframe.style.display = 'none';
+        hiddenIframe.src = fileUrl;
+        document.body.appendChild(hiddenIframe);
+
+        // Fallback window location trigger if iframe doesn't initiate
+        setTimeout(function() {
+          const manualBtn = document.getElementById('manual-download-btn');
+          if (manualBtn) {
+            manualBtn.classList.add('highlight-pulse');
+          }
+        }, 1500);
+      }
+    }, intervalTime);
+  });
+</script>
+
+<%- include('partials/footer') %>

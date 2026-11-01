@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= typeof title !== 'undefined' ? title : 'Admin Panel' %></title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="icon" type="image/svg+xml" href="/images/logo.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body class="admin-body">
+  <header class="admin-header">
+    <div class="container admin-header-container">
+      <div class="admin-brand">
+        <a href="/admin" class="admin-logo">
+          <span class="brand-text">Study<span>Vault</span></span>
+          <span class="admin-tag">Admin</span>
+        </a>
+      </div>
+
+      <nav class="admin-nav">
+        <a href="/admin" class="admin-nav-link <%= (typeof activeNav !== 'undefined' && activeNav === 'dashboard') ? 'active' : '' %>">
+          Dashboard
+        </a>
+        <a href="/admin/notes" class="admin-nav-link <%= (typeof activeNav !== 'undefined' && activeNav === 'notes') ? 'active' : '' %>">
+          Notes Library
+        </a>
+        <a href="/admin/notes/new" class="admin-nav-link <%= (typeof activeNav !== 'undefined' && activeNav === 'new-note') ? 'active' : '' %>">
+          + Add Note
+        </a>
+        <a href="/admin/categories" class="admin-nav-link <%= (typeof activeNav !== 'undefined' && activeNav === 'categories') ? 'active' : '' %>">
+          Categories
+        </a>
+        <a href="/" target="_blank" class="admin-nav-link external-link" title="Open live website in new tab">
+          Live Site &nearr;
+        </a>
+        <a href="/admin/logout" class="admin-logout-btn">
+          Logout
+        </a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container admin-main">
+    <% if (typeof success !== 'undefined' && success) { %>
+      <div class="alert alert-success">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
+        <span><%= success %></span>
+      </div>
+    <% } %>
+
+    <% if (typeof error !== 'undefined' && error) { %>
+      <div class="alert alert-danger">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        <span><%= error %></span>
+      </div>
+    <% } %>

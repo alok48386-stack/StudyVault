@@ -1,0 +1,141 @@
+<%- include('partials/header') %>
+
+<div class="hero-section">
+  <div class="container hero-container">
+    <div class="hero-content">
+      <span class="hero-badge">100% Free Academic Notes</span>
+      <h1 class="hero-title">Download Verified Study Notes & Formula Sheets in Seconds</h1>
+      <p class="hero-subtitle">
+        Zero sign-up required. Browse university & high school notes, revision cheatsheets, and exam formula summaries.
+      </p>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <!-- Subject / Category Filter Chips -->
+  <section class="category-filter-section" aria-label="Filter notes by subject">
+    <div class="category-filter-scroll">
+      <a href="/" class="filter-chip <%= (!selectedCategorySlug || selectedCategorySlug === 'all') ? 'active' : '' %>">
+        <span class="chip-name">All Subjects</span>
+      </a>
+      <% categories.forEach(cat => { %>
+        <a 
+          href="/?category=<%= cat.slug %>" 
+          class="filter-chip <%= (selectedCategorySlug === cat.slug) ? 'active' : '' %>"
+        >
+          <span class="chip-name"><%= cat.name %></span>
+          <span class="chip-count"><%= cat.note_count %></span>
+        </a>
+      <% }); %>
+    </div>
+  </section>
+
+  <% if (selectedCategory) { %>
+    <div class="filter-banner">
+      <div class="filter-banner-text">
+        Showing notes for subject: <strong><%= selectedCategory.name %></strong>
+      </div>
+      <a href="/" class="clear-filter-link">Clear filter &times;</a>
+    </div>
+  <% } %>
+
+  <!-- Section 1: Latest Notes -->
+  <section class="notes-section">
+    <div class="section-header">
+      <div>
+        <h2 class="section-title">Latest Notes</h2>
+        <p class="section-subtitle">Freshly added study guides and revision sheets</p>
+      </div>
+    </div>
+
+    <% if (latestNotes && latestNotes.length > 0) { %>
+      <div class="notes-grid">
+        <% latestNotes.forEach(note => { %>
+          <%- include('partials/note-card', { note }) %>
+        <% }); %>
+      </div>
+    <% } else { %>
+      <div class="empty-state">
+        <p>No latest notes available in this subject.</p>
+        <a href="/" class="btn btn-secondary">Browse All Subjects</a>
+      </div>
+    <% } %>
+  </section>
+
+  <!-- Section 2: Popular Notes -->
+  <section class="notes-section">
+    <div class="section-header">
+      <div>
+        <h2 class="section-title">Popular Notes</h2>
+        <p class="section-subtitle">Most downloaded study resources by fellow students</p>
+      </div>
+    </div>
+
+    <% if (popularNotes && popularNotes.length > 0) { %>
+      <div class="notes-grid">
+        <% popularNotes.forEach(note => { %>
+          <%- include('partials/note-card', { note }) %>
+        <% }); %>
+      </div>
+    <% } else { %>
+      <div class="empty-state">
+        <p>No popular notes found for this subject.</p>
+      </div>
+    <% } %>
+  </section>
+
+  <!-- Section 3: All Notes (Paginated) -->
+  <section class="notes-section" id="all-notes-section">
+    <div class="section-header">
+      <div>
+        <h2 class="section-title">All Notes</h2>
+        <p class="section-subtitle">Browse through our complete library (<%= pagination.totalNotes %> total notes)</p>
+      </div>
+    </div>
+
+    <% if (allNotes && allNotes.length > 0) { %>
+      <div class="notes-grid">
+        <% allNotes.forEach(note => { %>
+          <%- include('partials/note-card', { note }) %>
+        <% }); %>
+      </div>
+
+      <!-- Pagination Navigation -->
+      <% if (pagination.totalPages > 1) { %>
+        <nav class="pagination-nav" aria-label="Page navigation">
+          <% const catParam = selectedCategorySlug ? `&category=${selectedCategorySlug}` : ''; %>
+          
+          <% if (pagination.hasPrev) { %>
+            <a href="/?page=<%= pagination.prevPage %><%= catParam %>#all-notes-section" class="pagination-btn prev">
+              &larr; Previous
+            </a>
+          <% } else { %>
+            <span class="pagination-btn disabled">&larr; Previous</span>
+          <% } %>
+
+          <span class="pagination-info">
+            Page <strong><%= pagination.currentPage %></strong> of <strong><%= pagination.totalPages %></strong>
+          </span>
+
+          <% if (pagination.hasNext) { %>
+            <a href="/?page=<%= pagination.nextPage %><%= catParam %>#all-notes-section" class="pagination-btn next">
+              Next &rarr;
+            </a>
+          <% } else { %>
+            <span class="pagination-btn disabled">Next &rarr;</span>
+          <% } %>
+        </nav>
+      <% } %>
+    <% } else { %>
+      <div class="empty-state">
+        <div class="empty-icon">&#128218;</div>
+        <h3>No notes found</h3>
+        <p>We couldn't find any study notes in this category yet.</p>
+        <a href="/" class="btn btn-primary">Browse All Notes</a>
+      </div>
+    <% } %>
+  </section>
+</div>
+
+<%- include('partials/footer') %>

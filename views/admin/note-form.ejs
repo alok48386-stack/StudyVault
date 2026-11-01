@@ -1,0 +1,149 @@
+<%- include('layout-header') %>
+
+<div class="admin-page-header">
+  <div>
+    <h1 class="admin-heading"><%= isEdit ? 'Edit Study Note' : 'Upload New Study Note' %></h1>
+    <p class="admin-subheading">
+      <%= isEdit ? 'Update details or replace files for this study resource' : 'Add a verified study resource to the library' %>
+    </p>
+  </div>
+  <div class="admin-header-actions">
+    <a href="/admin/notes" class="btn btn-outline">&larr; Back to Notes Library</a>
+  </div>
+</div>
+
+<div class="form-container">
+  <div class="admin-card">
+    <form 
+      action="<%= isEdit ? '/admin/notes/' + note.id + '/edit' : '/admin/notes/new' %>" 
+      method="POST" 
+      enctype="multipart/form-data" 
+      class="admin-form"
+    >
+      <!-- Title -->
+      <div class="form-group">
+        <label for="title" class="form-label required">Note Title</label>
+        <input 
+          type="text" 
+          name="title" 
+          id="title" 
+          class="form-control" 
+          placeholder="e.g. Calculus I Complete Formula Sheet & Solved Proofs" 
+          value="<%= isEdit ? note.title : '' %>" 
+          required
+        >
+        <small class="form-hint">A clear, descriptive title helps students find your note quickly.</small>
+      </div>
+
+      <div class="form-row">
+        <!-- Subject / Category -->
+        <div class="form-group col-md-6">
+          <label for="category_id" class="form-label required">Subject / Category</label>
+          <select name="category_id" id="category_id" class="form-control" required>
+            <option value="">-- Select Subject --</option>
+            <% categories.forEach(cat => { %>
+              <option 
+                value="<%= cat.id %>" 
+                <%= (isEdit && note.category_id === cat.id) ? 'selected' : '' %>
+              >
+                <%= cat.name %>
+              </option>
+            <% }); %>
+          </select>
+        </div>
+
+        <!-- Uploader Name -->
+        <div class="form-group col-md-6">
+          <label for="uploader_name" class="form-label">Uploader Name</label>
+          <input 
+            type="text" 
+            name="uploader_name" 
+            id="uploader_name" 
+            class="form-control" 
+            placeholder="e.g. Admin or Prof. Smith" 
+            value="<%= isEdit ? (note.uploader_name || 'Admin') : 'Admin' %>"
+          >
+        </div>
+      </div>
+
+      <!-- Description -->
+      <div class="form-group">
+        <label for="description" class="form-label required">Note Overview & Description</label>
+        <textarea 
+          name="description" 
+          id="description" 
+          rows="4" 
+          class="form-control" 
+          placeholder="Detail what topics, formulas, or chapters this note covers..." 
+          required
+        ><%= isEdit ? note.description : '' %></textarea>
+      </div>
+
+      <!-- File Uploads Section -->
+      <div class="upload-sections-box">
+        <!-- Note File (PDF, DOCX, etc.) -->
+        <div class="form-group">
+          <label for="note_file" class="form-label <%= isEdit ? '' : 'required' %>">
+            Note Document File
+          </label>
+          
+          <% if (isEdit && note.file_path) { %>
+            <div class="current-file-badge">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+              <span>Current file: <strong><%= note.file_path %></strong> (<%= (note.file_type || '').toUpperCase() %>, <%= formatBytes(note.file_size) %>)</span>
+            </div>
+            <p class="text-xs text-muted" style="margin-top: 0.35rem;">Leave empty below if you do not want to replace the current file.</p>
+          <% } %>
+
+          <input 
+            type="file" 
+            name="note_file" 
+            id="note_file" 
+            class="form-control file-input" 
+            accept=".pdf,.doc,.docx,.ppt,.pptx,.zip"
+            <%= isEdit ? '' : 'required' %>
+          >
+          <small class="form-hint">
+            Allowed formats: <strong>PDF, DOC, DOCX, PPT, PPTX, ZIP</strong> (Max 25 MB). File type & size are detected automatically.
+          </small>
+        </div>
+
+        <!-- Preview Image (JPG, PNG, WEBP) -->
+        <div class="form-group">
+          <label for="preview_image" class="form-label">
+            Preview Image / Thumbnail <span class="text-muted">(Optional)</span>
+          </label>
+
+          <% if (isEdit && note.preview_image) { %>
+            <div class="current-preview-box">
+              <span class="text-xs text-muted">Current preview:</span>
+              <img src="/<%= note.preview_image.replace(/^\//, '') %>" alt="" class="edit-preview-thumb" onerror="this.src='/storage/previews/default-preview.svg';">
+            </div>
+          <% } %>
+
+          <input 
+            type="file" 
+            name="preview_image" 
+            id="preview_image" 
+            class="form-control file-input" 
+            accept=".jpg,.jpeg,.png,.webp,.svg"
+          >
+          <small class="form-hint">
+            Allowed formats: <strong>JPG, PNG, WEBP</strong> (Max 2 MB). If omitted, an attractive default subject thumbnail is generated automatically.
+          </small>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary btn-lg">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+          <%= isEdit ? 'Save Changes' : 'Publish Note' %>
+        </button>
+        <a href="/admin/notes" class="btn btn-secondary">Cancel</a>
+      </div>
+    </form>
+  </div>
+</div>
+
+<%- include('layout-footer') %>

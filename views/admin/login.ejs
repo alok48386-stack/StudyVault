@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="icon" type="image/svg+xml" href="/images/logo.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body class="login-body">
+  <div class="login-wrapper">
+    <div class="login-card">
+      <div class="login-brand">
+        <a href="/" class="brand-logo">
+          <svg class="logo-icon" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect width="32" height="32" rx="8" fill="url(#logo-grad)"/>
+            <path d="M9 10.5C9 9.67157 9.67157 9 10.5 9H21.5C22.3284 9 23 9.67157 23 10.5V21.5C23 22.3284 22.3284 23 21.5 23H10.5C9.67157 23 9 22.3284 9 21.5V10.5Z" stroke="white" stroke-width="2" stroke-linecap="round"/>
+            <path d="M13 13.5H19" stroke="white" stroke-width="2" stroke-linecap="round"/>
+            <path d="M13 17.5H19" stroke="white" stroke-width="2" stroke-linecap="round"/>
+            <defs>
+              <linearGradient id="logo-grad" x1="0" y1="0" x2="32" y2="32" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#4F46E5"/>
+                <stop offset="1" stop-color="#7C3AED"/>
+              </linearGradient>
+            </defs>
+          </svg>
+          <span class="brand-text">Study<span>Vault</span></span>
+        </a>
+      </div>
+
+      <div class="login-header">
+        <h1 class="login-title">Admin Access</h1>
+        <p class="login-subtitle">Enter your site master password to manage notes and subjects.</p>
+      </div>
+
+      <% if (error) { %>
+        <div class="alert alert-danger">
+          <%= error %>
+        </div>
+      <% } %>
+
+      <form action="/admin/login" method="POST" class="login-form">
+        <div class="form-group">
+          <label for="password" class="form-label">Master Password</label>
+          <input 
+            type="password" 
+            name="password" 
+            id="password" 
+            class="form-control" 
+            placeholder="Enter admin password" 
+            required 
+            autofocus
+          >
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-block">
+          Authenticate & Unlock Panel
+        </button>
+      </form>
+
+      <div class="login-footer">
+        <a href="/">&larr; Return to Public Website</a>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

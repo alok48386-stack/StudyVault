@@ -1,0 +1,30 @@
+<% if (adsterra && adsterra.enabled && !locals.isAdmin) { %>
+<!-- Adsterra Popunder Monetization Container -->
+<div id="adsterra-popunder-slot" style="display:none;">
+  <script>
+    (function() {
+      // Frequency capping protection: run at most once per browser session
+      try {
+        var adServed = sessionStorage.getItem('studyvault_ad_served');
+        if (!adServed) {
+          sessionStorage.setItem('studyvault_ad_served', 'true');
+          
+          // Configurable Adsterra popunder trigger
+          // Replace or insert your production Adsterra popunder tag here or via process.env.ADSTERRA_SCRIPT
+          /* 
+          var adScript = document.createElement('script');
+          adScript.type = 'text/javascript';
+          adScript.src = '//www.example-adsterra-domain.com/popunder.js';
+          adScript.async = true;
+          document.head.appendChild(adScript);
+          */
+          console.log('[Adsterra] Popunder script initialized (capped to 1 per session).');
+        }
+      } catch (e) {
+        // Safe fallback in case storage is restricted
+      }
+    })();
+  </script>
+  <%- adsterra.scriptTag %>
+</div>
+<% } %>

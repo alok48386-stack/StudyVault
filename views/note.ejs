@@ -1,0 +1,116 @@
+<%- include('partials/header') %>
+<%- include('partials/ad-script') %>
+
+<div class="container note-detail-container">
+  <!-- Breadcrumbs -->
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <a href="/">Home</a>
+    <span class="separator">/</span>
+    <a href="/?category=<%= note.category_slug %>"><%= note.category_name %></a>
+    <span class="separator">/</span>
+    <span class="current"><%= note.title %></span>
+  </nav>
+
+  <!-- Note Detail Card -->
+  <div class="note-detail-card">
+    <div class="note-detail-layout">
+      <!-- Left Column: Large Preview Image -->
+      <div class="note-preview-column">
+        <div class="note-large-preview-wrapper">
+          <% const previewSrc = note.preview_image ? (note.preview_image.startsWith('/') ? note.preview_image : '/' + note.preview_image) : '/storage/previews/default-preview.svg'; %>
+          <img 
+            src="<%= previewSrc %>" 
+            alt="Preview of <%= note.title %>" 
+            class="note-large-preview"
+            onerror="this.onerror=null; this.src='/storage/previews/default-preview.svg';"
+          >
+          <div class="preview-badge-overlay">
+            <span class="badge-format <%= (note.file_type || 'pdf').toLowerCase() %>">
+              <%= (note.file_type || 'pdf').toUpperCase() %>
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column: Information & Download Action -->
+      <div class="note-info-column">
+        <div class="note-header-info">
+          <a href="/?category=<%= note.category_slug %>" class="category-pill-lg">
+            <%= note.category_name %>
+          </a>
+          <h1 class="note-main-title"><%= note.title %></h1>
+        </div>
+
+        <!-- Metadata Grid -->
+        <div class="note-meta-table">
+          <div class="meta-item">
+            <span class="meta-label">File Format</span>
+            <span class="meta-value format-pill"><%= (note.file_type || 'PDF').toUpperCase() %></span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-label">File Size</span>
+            <span class="meta-value"><%= formatBytes(note.file_size) %></span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-label">Uploaded By</span>
+            <span class="meta-value"><%= note.uploader_name || 'Admin' %></span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-label">Uploaded Date</span>
+            <span class="meta-value"><%= formatDate(note.created_at) %></span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-label">Downloads</span>
+            <span class="meta-value highlight"><%= note.download_count %></span>
+          </div>
+        </div>
+
+        <!-- Description Box -->
+        <div class="note-description-box">
+          <h2 class="desc-heading">Overview & Content Description</h2>
+          <div class="desc-text">
+            <%= note.description %>
+          </div>
+        </div>
+
+        <!-- Big Download CTA Button -->
+        <div class="download-action-box">
+          <a href="/download/<%= note.slug %>" class="btn btn-download-hero">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="7 10 12 15 17 10"></polyline>
+              <line x1="12" y1="15" x2="12" y2="3"></line>
+            </svg>
+            <span>Download Note (<%= formatBytes(note.file_size) %>)</span>
+          </a>
+          <p class="download-guarantee">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2.5">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+            </svg>
+            Direct download. No registration, no watermarks, completely free.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Related Notes Section (4 items of same subject) -->
+  <% if (relatedNotes && relatedNotes.length > 0) { %>
+    <section class="related-notes-section">
+      <div class="section-header">
+        <div>
+          <h2 class="section-title">Related <%= note.category_name %> Notes</h2>
+          <p class="section-subtitle">More study guides and formula sheets from this subject</p>
+        </div>
+      </div>
+
+      <div class="notes-grid related-grid">
+        <% relatedNotes.forEach(relNote => { %>
+          <%- include('partials/note-card', { note: relNote }) %>
+        <% }); %>
+      </div>
+    </section>
+  <% } %>
+</div>
+
+<%- include('partials/footer') %>

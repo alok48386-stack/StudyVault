@@ -1,0 +1,22 @@
+<%- include('partials/header') %>
+
+<div class="container not-found-container">
+  <div class="not-found-card">
+    <div class="not-found-code">404</div>
+    <h1 class="not-found-title">Page or Study Note Not Found</h1>
+    <p class="not-found-desc">
+      <%= typeof message !== 'undefined' ? message : "The study note, category, or page you are looking for doesn't exist or has been moved." %>
+    </p>
+
+    <div class="not-found-actions">
+      <a href="/" class="btn btn-primary">
+        &larr; Back to Homepage
+      </a>
+      <a href="/?category=mathematics" class="btn btn-secondary">
+        Browse Popular Subjects
+      </a>
+    </div>
+  </div>
+</div>
+
+<%- include('partials/footer') %>
